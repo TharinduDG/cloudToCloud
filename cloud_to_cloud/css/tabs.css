@@ -1,0 +1,60 @@
+/* CSS Document */
+#openid_url{
+	padding:2px;	
+	border:solid #CCC 2px;
+	border-radius:5px;
+}
+.provider_logo:hover{
+	opacity:0.8;	
+}
+.provider_logo{
+	width:120px;
+	height:120px;	
+	cursor:pointer;
+}
+#providers{
+	width:80%;
+	height:60%;
+	float:right;
+	clear:left;	
+	padding-top:70px;
+}
+.login_window{
+	display:none;
+	border-color:#CCC;
+	border-width:5px;
+	border-style:solid;
+	border-radius:5px;
+	width:60%;
+	height:60%;
+	float:right;
+	padding:1em;
+	margin-top:-315px;
+	color:#666;
+	margin-right:20%;
+	text-align:center;
+}
+.current{
+	border-color:#CCC;
+	border-width:5px;
+	border-style:solid;	
+	border-radius:5px;
+	border-bottom:none;
+}
+img {
+	padding:0.5em;	
+}
+img#openid {
+	width:105px;
+	height:32px;
+}
+img#yahoo{
+	width: 105px;
+	height:32px;	
+}
+img#google{
+	width: 105px;
+	height:32px;
+}
+</style>
+

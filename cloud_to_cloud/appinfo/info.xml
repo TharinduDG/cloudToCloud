@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<info>
+    <id>cloud_to_cloud</id>
+    <name>Cloud To Cloud</name>
+    <description>Share files among other ownCloud members</description>
+    <version>0.1</version>
+    <licence>AGPL</licence>
+    <author>Sampath Basnagoda, Tharindu Galappaththi, Visitha Baddegama and Buddhiprabha Erabadda</author>
+    <require>4.93</require>
+    <types>
+        <type>filesystem</type>
+	<type>prelogin</type>
+    </types>
+    
+</info>
