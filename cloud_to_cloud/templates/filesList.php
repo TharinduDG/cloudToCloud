@@ -1,2 +1,4 @@
-<?php echo "Files to be displayed"?>
+<?php
+    print $_['data'];
+?>
 
