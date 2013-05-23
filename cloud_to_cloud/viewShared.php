@@ -76,7 +76,6 @@ try {
 			);
 
 			//now signup/login the user.
-			//print_r($data);
 			$tmpl = new OCP\Template('cloud_to_cloud', 'filesList', 'user');
 			$tmpl->assign( 'data' , $data , false );
 			$tmpl->printPage();
