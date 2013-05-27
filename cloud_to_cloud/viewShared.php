@@ -94,6 +94,7 @@ try {
 //$tmpl = new OCP\Template('cloud_to_cloud', 'login', 'user');
 //$tmpl->printPage();
 
-
+$dir = isset($_GET['dir']) ? stripslashes($_GET['dir']) : '';
 $tmpl = new OCP\Template('cloud_to_cloud', 'filesList', 'user');
+$tmpl->assign('directory',$dir,false);
 $tmpl->printPage();

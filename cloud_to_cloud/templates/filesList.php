@@ -1,9 +1,9 @@
 <?php 
 
-$dir = isset($_GET['dir']) ? stripslashes($_GET['dir']) : '';
+$dir = $_['directory'];
 // Redirect if directory does not exist
 if (!\OC\Files\Filesystem::is_dir($dir . '/')) {
-	header('Location: ' . OCP\Util::getScriptName() . '');
+	header('Location: ' . OCP\Util::linkTo('cloud_to_cloud', 'viewShared.php') . '');
 	exit();
 }
 
@@ -81,7 +81,7 @@ $tmpl = new OCP\Template('files', 'part.list', '');
 $tmpl->assign('files', $files);
 $tmpl->assign('breadcrumb', $breadcrumbNav->fetchPage());
 $tmpl->assign('permissions', $permissions);
-$tmpl->assign('baseURL', OCP\Util::linkTo('cloud_to_cloud', 'filesList.php') . '?dir=');
+$tmpl->assign('baseURL', OCP\Util::linkTo('cloud_to_cloud', 'viewShared.php') . '?dir=');
 $tmpl->assign('downloadURL', OCP\Util::linkToRoute('download', array('file' => '/')));
 $tmpl->assign('disableSharing', false);
 $files_list = $tmpl->fetchPage();
