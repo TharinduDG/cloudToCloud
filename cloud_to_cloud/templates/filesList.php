@@ -49,7 +49,7 @@ foreach (explode('/', $dir) as $i) {
 
 $breadcrumbNav = new OCP\Template('files', 'part.breadcrumb', '');
 $breadcrumbNav->assign('breadcrumb', $breadcrumb);
-$breadcrumbNav->assign('baseURL', OCP\Util::linkTo('files', 'index.php') . '?dir=');
+$breadcrumbNav->assign('baseURL', OCP\Util::linkTo('cloud_to_cloud', 'viewShared.php') . '?dir=');
 
 $permissions = OCP\PERMISSION_READ;
 if (\OC\Files\Filesystem::isCreatable($dir . '/')) {
@@ -79,7 +79,6 @@ OCP\App::setActiveNavigationEntry('files_index');
 
 $tmpl = new OCP\Template('files', 'part.list', '');
 $tmpl->assign('files', $files);
-$tmpl->assign('breadcrumb', $breadcrumbNav->fetchPage());
 $tmpl->assign('permissions', $permissions);
 $tmpl->assign('baseURL', OCP\Util::linkTo('cloud_to_cloud', 'viewShared.php') . '?dir=');
 $tmpl->assign('downloadURL', OCP\Util::linkToRoute('download', array('file' => '/')));
@@ -90,9 +89,9 @@ $allowZipDownload = intval(OCP\Config::getSystemValue('allowZipDownload', true))
 
 
 ?>
-
-<?php print_unescaped($_['breadcrumb']); ?>
-
+<div id="controls">
+<?php print_unescaped($breadcrumbNav->fetchPage()); ?>
+</div>
 <table id="filestable">
 	<thead>
 		<tr>
