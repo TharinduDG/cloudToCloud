@@ -71,8 +71,6 @@ OCP\Util::addStyle('cloud_to_cloud', 'custom');
 OCP\Util::addscript('files', 'jquery.iframe-transport');
 OCP\Util::addscript('files', 'jquery.fileupload');
 OCP\Util::addscript('files', 'jquery-visibility');
-OCP\Util::addscript('files', 'filelist');
-OCP\Util::addscript('files', 'fileactions');
 OCP\Util::addscript('files', 'files');
 OCP\Util::addscript('files', 'keyboardshortcuts');
 
@@ -85,9 +83,6 @@ $tmpl->assign('baseURL', OCP\Util::linkTo('cloud_to_cloud', 'viewShared.php') . 
 $tmpl->assign('downloadURL', OCP\Util::linkToRoute('download', array('file' => '/')));
 $tmpl->assign('disableSharing', false);
 $files_list = $tmpl->fetchPage();
-
-
-
 ?>
 <div id="controls">
 	<?php print_unescaped($breadcrumbNav->fetchPage()); ?>

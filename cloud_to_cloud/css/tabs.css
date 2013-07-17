@@ -14,10 +14,10 @@
 }
 #providers{
 	width:80%;
-	height:60%;
+	height:80%;
 	float:right;
 	clear:left;	
-	padding-top:70px;
+
 }
 .login_window{
 	display:none;
@@ -25,11 +25,11 @@
 	border-width:5px;
 	border-style:solid;
 	border-radius:5px;
-	width:60%;
+	width:400px;
 	height:60%;
 	float:right;
 	padding:1em;
-	margin-top:-315px;
+
 	color:#666;
 	margin-right:20%;
 	text-align:center;

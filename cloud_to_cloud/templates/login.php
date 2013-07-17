@@ -9,7 +9,7 @@
 		alt="yahoo" />
 </div>
 <form id="provider_form" method="post"
-	action="<?php echo OC_Helper::linkTo('cloud_to_cloud','viewShared.php')?>">
+	action="<?php echo OC_Helper::linkTo('cloud_to_cloud','myFiles.php')?>">
 	<div class="login_window" provider="openid">
 		OpenID: <input size="80" type="text" id="openid_url"
 			name="openid_identifier" />

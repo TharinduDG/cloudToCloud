@@ -34,5 +34,5 @@ $(document).ready(function(e) {
 		}
 		//$("#provider_form").attr('action','openid/signin.php');	
 	});
-	
+
 });

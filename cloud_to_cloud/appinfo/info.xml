@@ -11,5 +11,7 @@
         <type>filesystem</type>
 	<type>prelogin</type>
     </types>
-    
+    <public>
+        <cloud_to_cloud>myFiles.php</cloud_to_cloud>
+    </public>
 </info>

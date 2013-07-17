@@ -1,10 +1,10 @@
 <?php
 
 /**
- * ownCloud - internal_messages
+ * ownCloud - ajax frontend
  *
- * @author Tharindu Galappaththi,Sampath Basnagoda, Visitha Baddegama, Buddhiprabha Erabadda
- * @copyright 2013 Tharindu Galappaththi,Sampath Basnagoda, Visitha Baddegama, Buddhiprabha Erabadda <tdgalappaththi@gmail.com>
+ * @author Robin Appelman
+ * @copyright 2010 Robin Appelman icewind1991@gmail.com
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE
@@ -21,80 +21,119 @@
  *
  */
 
-require_once dirname(__FILE__).'/openid.php';
 
 
+// Check if we are a user
 OCP\User::checkLoggedIn();
-OCP\App::checkAppEnabled('cloud_to_cloud');
 
-OCP\Util::addStyle('cloud_to_cloud', 'tabs');
+// Load the files we need
+OCP\Util::addStyle('files', 'files');
+OCP\Util::addStyle('cloud_to_cloud','custom');
+OCP\Util::addscript('files', 'jquery.iframe-transport');
+OCP\Util::addscript('files', 'jquery-visibility');
+OCP\Util::addscript('files', 'filelist');
 
-OCP\Util::addScript('cloud_to_cloud', 'jquery');
-OCP\Util::addScript('cloud_to_cloud', 'tabs');
-
-
-
-try {
-	# Change 'localhost' to your domain name.
-	$openid = new LightOpenID('localhost');
-	if(!$openid->mode) {
-
-		if(isset($_GET['provider']) && strcmp($_GET['provider'], 'google') == 0) {
-			$openid->identity = 'https://www.google.com/accounts/o8/id';
-			$openid->required = array('contact/email','namePerson/first','namePerson/last');
-			header('Location: ' . $openid->authUrl());
-
-		}else if(isset($_GET['provider']) && strcmp($_GET['provider'], 'yahoo') == 0) {
-			$openid->identity = 'https://me.yahoo.com';
-			$openid->required = array('contact/email','namePerson/first','namePerson/last');
-			header('Location: ' . $openid->authUrl());
-
-		}else if(isset($_POST['openid_identifier'])) {
-			$openid->identity = $_POST['openid_identifier'];
-			$openid->required = array('contact/email','namePerson/first','namePerson/last');
-			header('Location: ' . $openid->authUrl());
-
-		}
-
-	} elseif($openid->mode == 'cancel') {
-		echo 'User has canceled authentication!';
-	} else {
-
-		if($openid->validate())
-		{
-			//User logged in
-			$d = $openid->getAttributes();
-
-			$first_name = $d['namePerson/first'];
-			$last_name = $d['namePerson/last'];
-			$email = $d['contact/email'];
-
-			$data = array(
-					'first_name' => $first_name ,
-					'last_name' => $last_name ,
-					'email' => $email ,
-			);
-
-			//now signup/login the user.
-			$tmpl = new OCP\Template('cloud_to_cloud', 'filesList', 'user');
-			$tmpl->assign( 'data' , $data , false );
-			$tmpl->printPage();
-		}
-		else
-		{
-			$tmpl = new OCP\Template('cloud_to_cloud', 'error', 'user');
-			$tmpl->assign( 'data' , $data , false );
-			$tmpl->printPage();
-		}
-	}
-} catch(ErrorException $e) {
-	echo $e->getMessage();
+OCP\App::setActiveNavigationEntry('files_index');
+// Load the files
+$dir = isset($_GET['dir']) ? stripslashes($_GET['dir']) : '';
+// Redirect if directory does not exist
+if (!\OC\Files\Filesystem::is_dir($dir . '/')) {
+	//header('Location: ' . OCP\Util::getScriptName() . '');
+	exit();
 }
 
-//$tmpl = new OCP\Template('cloud_to_cloud', 'login', 'user');
-//$tmpl->printPage();
+function fileCmp($a, $b) {
+	if ($a['type'] == 'dir' and $b['type'] != 'dir') {
+		return -1;
+	} elseif ($a['type'] != 'dir' and $b['type'] == 'dir') {
+		return 1;
+	} else {
+		return strnatcasecmp($a['name'], $b['name']);
+	}
+}
 
-$dir = isset($_GET['dir']) ? stripslashes($_GET['dir']) : '';
-$tmpl = new OCP\Template('cloud_to_cloud', 'filesList', 'user');
-$tmpl->assign('directory',$dir,false);
-$tmpl->printPage();
+$files = array();
+$user = OC_User::getUser();
+if (\OC\Files\Cache\Upgrade::needUpgrade($user)) { //dont load anything if we need to upgrade the cache
+	$content = array();
+	$needUpgrade = true;
+	$freeSpace = 0;
+} else {
+	$content = \OC\Files\Filesystem::getDirectoryContent($dir);
+	$freeSpace = \OC\Files\Filesystem::free_space($dir);
+	$needUpgrade = false;
+}
+foreach ($content as $i) {
+	$i['date'] = OCP\Util::formatDate($i['mtime']);
+	if ($i['type'] == 'file') {
+		$fileinfo = pathinfo($i['name']);
+		$i['basename'] = $fileinfo['filename'];
+		if (!empty($fileinfo['extension'])) {
+			$i['extension'] = '.' . $fileinfo['extension'];
+		} else {
+			$i['extension'] = '';
+		}
+	}
+	$i['directory'] = $dir;
+	$files[] = $i;
+}
+
+usort($files, "fileCmp");
+
+// Make breadcrumb
+$breadcrumb = array();
+$pathtohere = '';
+foreach (explode('/', $dir) as $i) {
+	if ($i != '') {
+		$pathtohere .= '/' . $i;
+		$breadcrumb[] = array('dir' => $pathtohere, 'name' => $i);
+	}
+}
+
+// make breadcrumb und filelist markup
+$list = new OCP\Template('cloud_to_cloud', 'part.list', '');
+$list->assign('files', $files);
+$list->assign('baseURL', OCP\Util::linkTo('cloud_to_cloud', 'viewShared.php') . '?dir=');
+$list->assign('downloadURL', OCP\Util::linkToRoute('download', array('file' => '/')));
+$list->assign('disableSharing', false);
+$breadcrumbNav = new OCP\Template('cloud_to_cloud', 'part.breadcrumb', '');
+$breadcrumbNav->assign('breadcrumb', $breadcrumb);
+$breadcrumbNav->assign('baseURL', OCP\Util::linkTo('cloud_to_cloud', 'viewShared.php') . '?dir=');
+
+$permissions = OCP\PERMISSION_READ;
+if (\OC\Files\Filesystem::isCreatable($dir . '/')) {
+	$permissions |= OCP\PERMISSION_CREATE;
+}
+if (\OC\Files\Filesystem::isUpdatable($dir . '/')) {
+	$permissions |= OCP\PERMISSION_UPDATE;
+}
+if (\OC\Files\Filesystem::isDeletable($dir . '/')) {
+	$permissions |= OCP\PERMISSION_DELETE;
+}
+if (\OC\Files\Filesystem::isSharable($dir . '/')) {
+	$permissions |= OCP\PERMISSION_SHARE;
+}
+
+if ($needUpgrade) {
+	OCP\Util::addscript('files', 'upgrade');
+	$tmpl = new OCP\Template('files', 'upgrade', 'user');
+	$tmpl->printPage();
+} else {
+	// information about storage capacities
+	$storageInfo=OC_Helper::getStorageInfo();
+	$maxUploadFilesize=OCP\Util::maxUploadFilesize($dir);
+
+	OCP\Util::addscript('cloud_to_cloud', 'fileactions');
+	OCP\Util::addscript('cloud_to_cloud', 'files');
+	OCP\Util::addscript('files', 'keyboardshortcuts');
+	$tmpl = new OCP\Template('cloud_to_cloud', 'index', 'user');
+	$tmpl->assign('fileList', $list->fetchPage());
+	$tmpl->assign('breadcrumb', $breadcrumbNav->fetchPage());
+	$tmpl->assign('dir', \OC\Files\Filesystem::normalizePath($dir));
+
+	$tmpl->assign('permissions', $permissions);
+	$tmpl->assign('files', $files);
+	$tmpl->assign('trash', \OCP\App::isEnabled('files_trashbin'));
+
+	$tmpl->printPage();
+}

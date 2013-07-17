@@ -11,7 +11,9 @@
 	if($relative_date_color>200) $relative_date_color = 200;
 	$name = rawurlencode($file['name']);
 	$name = str_replace('%2F', '/', $name);
-	$directory = rawurlencode($file['directory']);
+	$directory = rawurlencode($file['fileid']);
+
+
 	$directory = str_replace('%2F', '/', $directory); ?>
 	<tr data-id="<?php p($file['fileid']); ?>"
 		data-file="<?php p($name);?>"
@@ -28,7 +30,7 @@
 			>
 		
 		<?php if($file['type'] == 'dir'): ?>
-			<a class="name" href="<?php p(rtrim($_['baseURL'],'/').'/'.trim($directory,'/').'/'.$name); ?>" title="" >
+			<a class="name" href="<?php p(rtrim($_['baseURL'],'/').'/'.$directory); ?>" title="" >
 		<?php else: ?>
 			<a class="name"  title="" >
 		<?php endif; ?>

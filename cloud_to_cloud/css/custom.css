@@ -1,6 +1,8 @@
-#moto {
-	height: 25px;
-	margin-top: 1em;
-	z-index: 1000;
-	float: right;
+
+.error{
+    border-color: #dc2f0f  !important;
+    border-style: solid  !important;
+    border-width: 2px  !important;
+    background-color: #ffd1ce  !important;
 }
+]

@@ -21,13 +21,16 @@
  *
  */
 
-OCP\User::checkLoggedIn();
+//OCP\User::checkLoggedIn();
 OCP\App::checkAppEnabled('cloud_to_cloud');
 
 OCP\Util::addStyle('cloud_to_cloud', 'tabs');
 
 OCP\Util::addScript('cloud_to_cloud', 'jquery');
 OCP\Util::addScript('cloud_to_cloud', 'tabs');
+OCP\Util::addScript('cloud_to_cloud','fileShare');
 
-$tmpl = new OCP\Template('cloud_to_cloud', 'login', 'user');
-$tmpl->printPage();
+$tmpl = new OCP\Template('cloud_to_cloud', 'login', 'guest');
+$tmpl->printGuestPage('cloud_to_cloud','login',array());
+
+
